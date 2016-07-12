@@ -10,13 +10,14 @@ import UIKit
 
 class MoviesViewController: UIViewController {
     
-    
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     var refreshControl: UIRefreshControl!
     
     let apiKey = "660d335023d450eb3cfd376d7b81de56"
     let nowPlayingURL = "https://api.themoviedb.org/3/movie/now_playing?api_key="
     let topRatedURL = "https://api.themoviedb.org/3/movie/top_rated?api_key="
+    let searchURL = "https://api.themoviedb.org/3/search/movie?query=%@&api_key=%@"
     var type = 0
     var data = []
     
@@ -24,13 +25,15 @@ class MoviesViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        if self.tabBarItem.tag == 1 {
-            type = 1
+        if searchBar?.text?.characters.count > 0 {
+            type = 3
+        } else {
+            type = self.tabBarItem.tag
         }
         
-        self.tableView.dataSource = self
-        self.tableView.delegate = self
-        self.tabBarController?.delegate
+        tableView.dataSource = self
+        tableView.delegate = self
+        searchBar?.delegate = self
         
         // Initialize a UIRefreshControl
         let refreshControl = UIRefreshControl()
@@ -39,11 +42,14 @@ class MoviesViewController: UIViewController {
         refreshControlAction(refreshControl)
     }
 
-    func refreshControlAction(refreshControl: UIRefreshControl) {
+    
+    func refreshControlAction(refreshControl: UIRefreshControl?) {
         
         var urlString = nowPlayingURL.stringByAppendingString(apiKey)
         if type == 1 {
             urlString = topRatedURL.stringByAppendingString(apiKey)
+        } else if type == 3 {
+            urlString = String(format: searchURL, searchBar.text!.stringByAddingPercentEncodingForRFC3986()!, apiKey)
         }
         
         let url = NSURL(string: urlString)
@@ -74,7 +80,7 @@ class MoviesViewController: UIViewController {
                         
                         self.tableView.reloadData()
                         
-                        refreshControl.endRefreshing()
+                        refreshControl?.endRefreshing()
                     }
                 }
         });
@@ -120,4 +126,35 @@ extension MoviesViewController: UITableViewDelegate {
     }
 }
 
+extension MoviesViewController: UISearchBarDelegate {
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        
+        performSearch()
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+     
+        performSearch()
+    }
+    
+    func performSearch() {
+        
+        if searchBar?.text?.characters.count > 0 {
+            type = 3
+        }
 
+        refreshControlAction(refreshControl)
+        
+        type = self.tabBarItem.tag
+    }
+}
+
+extension String {
+    func stringByAddingPercentEncodingForRFC3986() -> String? {
+        let unreserved = "-._~/?"
+        let allowed = NSMutableCharacterSet.alphanumericCharacterSet()
+        allowed.addCharactersInString(unreserved)
+        return stringByAddingPercentEncodingWithAllowedCharacters(allowed)
+    }
+}

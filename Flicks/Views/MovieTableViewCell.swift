@@ -15,15 +15,21 @@ class MovieTableViewCell: UITableViewCell {
     @IBOutlet weak var photoView: UIImageView!
     @IBOutlet weak var descriptionView: UILabel!
     
-    let posterPath = "https://image.tmdb.org/t/p/w342"
+    let posterBaseUrl = "https://image.tmdb.org/t/p/w342"
 
     func initWithData(data: NSDictionary) {
         
         titleLabel?.text = data.valueForKeyPath("title") as? String
         descriptionView?.text = data.valueForKeyPath("overview") as? String
         
-        var urlString = data.valueForKeyPath("poster_path") as! String
-        urlString = posterPath.stringByAppendingString(urlString)
-        photoView?.setImageWithURL(NSURL(string: urlString)!)
+        if let posterPath = data["poster_path"] as? String {
+            let posterUrl = NSURL(string: posterBaseUrl + posterPath)
+            photoView.setImageWithURL(posterUrl!)
+        }
+        else {
+            // No poster image. Can either set to nil (no image) or a default movie poster image
+            // that you include as an asset
+            photoView.image = nil
+        }
     }
 }

@@ -17,7 +17,7 @@ class MovieDetailsViewController: UIViewController {
     @IBOutlet weak var descriptionView: UILabel!
     @IBOutlet weak var detailView: UIView!
     
-    let posterPath = "https://image.tmdb.org/t/p/w342"
+    let posterBaseUrl = "https://image.tmdb.org/t/p/w342"
 
     var data: NSDictionary = [:]
 
@@ -37,9 +37,16 @@ class MovieDetailsViewController: UIViewController {
         descriptionView?.sizeToFit()
         delta = (descriptionView?.frame.size.height)! - delta!
         
-        var urlString = data.valueForKeyPath("poster_path") as! String
-        urlString = posterPath.stringByAppendingString(urlString)
-        imageView?.setImageWithURL(NSURL(string: urlString)!)
+        if let posterPath = data["poster_path"] as? String {
+            let posterUrl = NSURL(string: posterBaseUrl + posterPath)
+            imageView.setImageWithURL(posterUrl!)
+        }
+        else {
+            // No poster image. Can either set to nil (no image) or a default movie poster image
+            // that you include as an asset
+            imageView.image = nil
+        }
+
 
         let contentWidth = scrollView.bounds.width
         let contentHeight = scrollView.bounds.height + delta!

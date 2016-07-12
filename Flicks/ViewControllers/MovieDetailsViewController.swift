@@ -18,6 +18,7 @@ class MovieDetailsViewController: UIViewController {
     @IBOutlet weak var detailView: UIView!
     
     let posterBaseUrl = "https://image.tmdb.org/t/p/w342"
+    let originalPosterBaseUrl = "https://image.tmdb.org/t/p/original"
 
     var data: NSDictionary = [:]
 
@@ -39,7 +40,9 @@ class MovieDetailsViewController: UIViewController {
         
         if let posterPath = data["poster_path"] as? String {
             let posterUrl = NSURL(string: posterBaseUrl + posterPath)
-            imageView.setImageWithURL(posterUrl!)
+            imageView.setImageWithURL(posterUrl!, placeholderImage: UIImage(named: "movie-placeholder"))
+            let originalBaseUrl = NSURL(string: originalPosterBaseUrl + posterPath)
+            imageView.setImageWithURL(originalBaseUrl!)
         }
         else {
             // No poster image. Can either set to nil (no image) or a default movie poster image

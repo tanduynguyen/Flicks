@@ -24,7 +24,7 @@ class MovieTableViewCell: UITableViewCell {
         
         if let posterPath = data["poster_path"] as? String {
             let posterUrl = NSURL(string: posterBaseUrl + posterPath)
-            photoView.setImageWithURL(posterUrl!)
+            photoView.setImageWithURL(posterUrl!, placeholderImage: UIImage(named: "movie-placeholder"))
         }
         else {
             // No poster image. Can either set to nil (no image) or a default movie poster image

@@ -130,7 +130,7 @@ extension MoviesViewController: UISearchBarDelegate {
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
         
-        performSearch()
+//        performSearch()
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {

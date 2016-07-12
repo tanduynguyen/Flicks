@@ -33,6 +33,7 @@ The following **additional** features are implemented:
 Here's a walkthrough of implemented user stories:
 
 ![Homepage](images/home.png)
+
 ![Details](images/details.png)
 
 
